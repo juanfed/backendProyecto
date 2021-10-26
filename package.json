@@ -7,7 +7,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "start": "node servidor.js"
+    "start": "nodemon servidor.js"
   },
   "dependencies": {
     "express": "^4.17.1"
