@@ -5,7 +5,13 @@
   "repository": "https://github.com/juanfed/backendProyecto.git",
   "author": "Juan Fernando <juanfed12345@gmail.com>",
   "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "node servidor.js"
+  },
   "dependencies": {
     "express": "^4.17.1"
   }
 }
+
+
