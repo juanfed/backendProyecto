@@ -22,7 +22,7 @@ app.use(Cors());
 
 app.get('/producto', (req, res) => { // ruta de tipo get
   console.log("estoy haciendo  una peticion get");
-  conexion.collection("productos").find().limit(50).toArray((err, result) => {
+  conexion.collection("productos").find({}).limit(50).toArray((err, result) => {
     if (err) {
       res.status(500).send("Error al consultar los productos");
     }
@@ -35,7 +35,6 @@ app.get('/producto', (req, res) => { // ruta de tipo get
 // solicitud de tipo patch
 app.patch('/producto/edit', (req, res) => { 
   const edicion = req.body;
-  console.log("servio de tipo patch realizada");
   console.log(edicion);
   const filtroProducto = { _id: new ObjectId(edicion.id) };
   delete edicion.id;
@@ -43,7 +42,7 @@ app.patch('/producto/edit', (req, res) => {
     $set: edicion,
   };
   conexion
-    .collection('producto')
+    .collection('productos')
     .findOneAndUpdate(
       filtroProducto,
       operacion,
@@ -73,7 +72,7 @@ app.post('/producto/nuevo', (req, res) => {
       Object.keys(datosProductos).includes('estado')
     ) {
       // implementacion del codigo para la creacion del producto
-      conexion.collection('producto').insertOne(datosProductos, (err, result) => {
+      conexion.collection('productos').insertOne(datosProductos, (err, result) => {
         if (err) {
           res.sendStatus(500);
         } else {
@@ -94,7 +93,7 @@ app.post('/producto/nuevo', (req, res) => {
 //solicitud de tipo delete
 app.delete('/producto/delete', (req, res) => {
   const filtroProducto = { _id: new ObjectId(req.body.id) };
-  conexion.collection('producto').deleteOne(filtroProducto, (err, result) => {
+  conexion.collection('productos').deleteOne(filtroProducto, (err, result) => {
     if (err) {
       console.error(err);
       res.sendStatus(500);
