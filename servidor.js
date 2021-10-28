@@ -65,7 +65,6 @@ app.post('/producto/nuevo', (req, res) => {
   console.log('llaves: ', Object.keys(datosProductos));
   try {
     if (
-      Object.keys(datosProductos).includes('id') &&
       Object.keys(datosProductos).includes('nombre') &&
       Object.keys(datosProductos).includes('descripcion') &&
       Object.keys(datosProductos).includes('valor') &&
