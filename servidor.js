@@ -21,7 +21,7 @@ app.use(Cors());
 
 
 app.get('/producto', (req, res) => { // ruta de tipo get
-  console.log("estoy haciendo  una peticion get");
+  console.log("productos actualizados");
   conexion.collection("productos").find({}).limit(50).toArray((err, result) => {
     if (err) {
       res.status(500).send("Error al consultar los productos");
@@ -78,9 +78,7 @@ app.post('/producto/nuevo', (req, res) => {
           console.log(result);
           res.sendStatus(200);
         }
-      })
-
-      res.sendStatus(200);
+      });
     } else {
       res.sendStatus(500);
     }
@@ -98,6 +96,7 @@ app.delete('/producto/delete', (req, res) => {
       res.sendStatus(500);
     } else {
       res.sendStatus(200);
+      console.log('se ha borrando el producto');
     }
   });
 });
