@@ -144,7 +144,7 @@ app.delete('/ventas/delete', (req, res) => {
       res.sendStatus(500);
     } else {
       res.sendStatus(200);
-      console.log('se ha eliminar la venta');
+      console.log('se ha eliminado la venta');
     }
   });
 });
@@ -161,6 +161,66 @@ app.get('/ventas', (req, res) => { // ruta de tipo get
     }
   });
 }); 
+
+// -------------solicutudes para usuarios-----------
+
+// solicitud de tipo get
+app.get('/usuarios', (req, res) => { // ruta de tipo get
+  console.log("usuarios actualizadas");
+  conexion.collection('usuarios').find({}).limit(50).toArray((err, result) => {
+    if (err) {
+      res.status(500).send("Error al consultar los usuarios");
+      console.log("error al consultar los usuarios");
+    }
+    else {
+      res.json(result);
+    }
+  });
+}); 
+
+// solicitud de tipo post
+app.post('/usuarios/nuevo', (req, res) => {
+  console.log(req);
+  const datosProductos = req.body;
+  console.log('llaves: ', Object.keys(datosProductos));
+  try {
+    if ( // para que no me deje crear si falta alguno de estos datos
+      Object.keys(datosProductos).includes('nombre') &&
+      Object.keys(datosProductos).includes('correo') &&
+      Object.keys(datosProductos).includes('rol') &&
+      Object.keys(datosProductos).includes('estado')
+    ) {
+      // implementacion del codigo para la creacion del producto
+      conexion.collection('usuarios').insertOne(datosProductos, (err, result) => {
+        if (err) {
+          res.sendStatus(500);
+        } else {
+          console.log(result);
+          res.sendStatus(200);
+        }
+      });
+    } else {
+      res.sendStatus(500);
+    }
+  } catch {
+    res.sendStatus(500);
+  }
+});
+
+// solicitud de tipo delete
+app.delete('/usuarios/delete', (req, res) => {
+  const filtroProducto = { _id: new ObjectId(req.body.id) };
+  conexion.collection('usuarios').deleteOne(filtroProducto, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.sendStatus(500);
+    } else {
+      res.sendStatus(200);
+      console.log('se ha eliminado el usuario');
+    }
+  });
+});
+
 
 
 
