@@ -102,6 +102,8 @@ app.delete('/producto/delete', (req, res) => {
 
 
 // -------------solicutudes para ventas-----------
+
+//solicitud de tipo post
 app.post('/ventas/nuevo', (req, res) => {
   console.log(req);
   const datosProductos = req.body;
@@ -131,6 +133,20 @@ app.post('/ventas/nuevo', (req, res) => {
   } catch {
     res.sendStatus(500);
   }
+});
+
+// solicitud de tipo delete
+app.delete('/ventas/delete', (req, res) => {
+  const filtroProducto = { _id: new ObjectId(req.body.id) };
+  conexion.collection('ventas').deleteOne(filtroProducto, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.sendStatus(500);
+    } else {
+      res.sendStatus(200);
+      console.log('se ha eliminar la venta');
+    }
+  });
 });
 
 // solictud de tipo get
