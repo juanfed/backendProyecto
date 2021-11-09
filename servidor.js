@@ -1,19 +1,10 @@
 import Express from "express";
 import { MongoClient, ObjectId } from 'mongodb'; // para conectarnos a la base de datos y trabajar con mongoclient
+import { conectarBD, getDB } from './db/db.js';
 import Cors from 'cors';
-import dotenv from 'dotenv'; 
+import dotenv from 'dotenv';
 
-dotenv.config({path:'./.env'}) // oara que me saque la ruta de la mongo desde el archivo .env que tengo en local
-
-const stringConexion = process.env.DATABASE_URL; // conexion con la base de datos de mongo
-
-  const client = new MongoClient(stringConexion, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-
-let conexion; // variable global
-
+dotenv.config({ path: './.env' }) // oara que me saque la ruta de la mongo desde el archivo .env que tengo en local
 
 // Creo la aplicacion del backend
 const app = Express();
@@ -23,6 +14,7 @@ app.use(Cors());
 
 app.get('/producto', (req, res) => { // ruta de tipo get
   console.log("productos actualizados");
+  const conexion = getDB();
   conexion.collection("productos").find({}).limit(50).toArray((err, result) => {
     if (err) {
       res.status(500).send("Error al consultar los productos");
@@ -34,7 +26,7 @@ app.get('/producto', (req, res) => { // ruta de tipo get
 });
 
 // solicitud de tipo patch
-app.patch('/producto/edit', (req, res) => { 
+app.patch('/producto/edit', (req, res) => {
   const edicion = req.body;
   console.log(edicion);
   const filtroProducto = { _id: new ObjectId(edicion.id) };
@@ -42,6 +34,7 @@ app.patch('/producto/edit', (req, res) => {
   const operacion = {
     $set: edicion,
   };
+  const conexion = getDB();
   conexion
     .collection('productos')
     .findOneAndUpdate(
@@ -71,6 +64,7 @@ app.post('/producto/nuevo', (req, res) => {
       Object.keys(datosProductos).includes('valor') &&
       Object.keys(datosProductos).includes('estado')
     ) {
+      const conexion = getDB();
       // implementacion del codigo para la creacion del producto
       conexion.collection('productos').insertOne(datosProductos, (err, result) => {
         if (err) {
@@ -91,6 +85,7 @@ app.post('/producto/nuevo', (req, res) => {
 //solicitud de tipo delete
 app.delete('/producto/delete', (req, res) => {
   const filtroProducto = { _id: new ObjectId(req.body.id) };
+  const conexion = getDB();
   conexion.collection('productos').deleteOne(filtroProducto, (err, result) => {
     if (err) {
       console.error(err);
@@ -120,6 +115,7 @@ app.post('/ventas/nuevo', (req, res) => {
       Object.keys(datosProductos).includes('nombreCliente') &&
       Object.keys(datosProductos).includes('estado')
     ) {
+      const conexion = getDB();
       // implementacion del codigo para la creacion del producto
       conexion.collection('ventas').insertOne(datosProductos, (err, result) => {
         if (err) {
@@ -139,6 +135,7 @@ app.post('/ventas/nuevo', (req, res) => {
 
 // solicitud de tipo delete
 app.delete('/ventas/delete', (req, res) => {
+  const conexion = getDB();
   const filtroProducto = { _id: new ObjectId(req.body.id) };
   conexion.collection('ventas').deleteOne(filtroProducto, (err, result) => {
     if (err) {
@@ -154,6 +151,7 @@ app.delete('/ventas/delete', (req, res) => {
 // solictud de tipo get
 app.get('/ventas', (req, res) => { // ruta de tipo get
   console.log("ventas actualizadas");
+  const conexion = getDB();
   conexion.collection('ventas').find({}).limit(50).toArray((err, result) => {
     if (err) {
       res.status(500).send("Error al consultar las ventas");
@@ -162,13 +160,14 @@ app.get('/ventas', (req, res) => { // ruta de tipo get
       res.json(result);
     }
   });
-}); 
+});
 
 // -------------solicutudes para usuarios-----------
 
 // solicitud de tipo get
 app.get('/usuarios', (req, res) => { // ruta de tipo get
   console.log("usuarios actualizadas");
+  const conexion = getDB();
   conexion.collection('usuarios').find({}).limit(50).toArray((err, result) => {
     if (err) {
       res.status(500).send("Error al consultar los usuarios");
@@ -178,7 +177,7 @@ app.get('/usuarios', (req, res) => { // ruta de tipo get
       res.json(result);
     }
   });
-}); 
+});
 
 // solicitud de tipo post
 app.post('/usuarios/nuevo', (req, res) => {
@@ -192,6 +191,7 @@ app.post('/usuarios/nuevo', (req, res) => {
       Object.keys(datosProductos).includes('rol') &&
       Object.keys(datosProductos).includes('estado')
     ) {
+      const conexion = getDB();
       // implementacion del codigo para la creacion del producto
       conexion.collection('usuarios').insertOne(datosProductos, (err, result) => {
         if (err) {
@@ -212,6 +212,7 @@ app.post('/usuarios/nuevo', (req, res) => {
 // solicitud de tipo delete
 app.delete('/usuarios/delete', (req, res) => {
   const filtroProducto = { _id: new ObjectId(req.body.id) };
+  const conexion = getDB();
   conexion.collection('usuarios').deleteOne(filtroProducto, (err, result) => {
     if (err) {
       console.error(err);
@@ -227,19 +228,9 @@ app.delete('/usuarios/delete', (req, res) => {
 
 
 const main = () => { // se conecta y me retorna en la base de datos
-
-  client.connect((err, db) => {
-    if (err) {
-      console.error("Error a la hora de coenctar a la base de datos");
-      return 'error';
-    }
-    conexion = db.db('celulares');
-    console.log("conexion exitosa")
-    return app.listen(process.env.PORT, () => { // abro el puerto en donde se ejecutará
-      console.log(`Ejecutando el servidor en puerto: ${process.env.PORT}`);
-    });
+  return app.listen(process.env.PORT, () => { // abro el puerto en donde se ejecutará
+    console.log(`Ejecutando el servidor en puerto: ${process.env.PORT}`);
   });
-
 };
 
-main(); //llamo a ejecutar la funcion main
+conectarBD(main); // saco la logica de conexion y dejar solo las funciones y configuraciones de expless
