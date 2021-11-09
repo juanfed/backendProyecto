@@ -1,9 +1,11 @@
 import Express from "express";
 import { MongoClient, ObjectId } from 'mongodb'; // para conectarnos a la base de datos y trabajar con mongoclient
 import Cors from 'cors';
+import dotenv from 'dotenv'; 
 
-const stringConexion =  //conexion con la basse de datos
-  'mongodb+srv://juanfed:0707MT60FZxSp35@proyectomisiontic.vsvmd.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+dotenv.config({path:'./.env'}) // oara que me saque la ruta de la mongo desde el archivo .env que tengo en local
+
+const stringConexion = process.env.DATABASE_URL; // conexion con la base de datos de mongo
 
   const client = new MongoClient(stringConexion, {
     useNewUrlParser: true,
@@ -233,8 +235,8 @@ const main = () => { // se conecta y me retorna en la base de datos
     }
     conexion = db.db('celulares');
     console.log("conexion exitosa")
-    return app.listen(5000, () => { // abro el puerto en donde se ejecutará
-      console.log("ejecutando el servidor");
+    return app.listen(process.env.PORT, () => { // abro el puerto en donde se ejecutará
+      console.log(`Ejecutando el servidor en puerto: ${process.env.PORT}`);
     });
   });
 
