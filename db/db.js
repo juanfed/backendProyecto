@@ -1,3 +1,4 @@
+// conexion con la base de datos
 import { MongoClient, ObjectId } from 'mongodb'; // para conectarnos a la base de datos y trabajar con mongoclient
 import dotenv from 'dotenv';
 
