@@ -13,6 +13,8 @@ dotenv.config({ path: './.env' }) // oara que me saque la ruta de la mongo desde
 // Creo la aplicacion del backend
 const app = Express();
 
+const port = process.env.PORT || 5000;
+
 app.use(Express.json()) // para que la solicitud se pase por aca y se desgloce
 app.use(Cors());
 
@@ -21,7 +23,7 @@ app.use(rutasUsuarios); // importamos las rutas para usuarios
 app.use(rutasVentas);   // importamos las rutas para vetas
 
 const main = () => { // se conecta y me retorna en la base de datos
-  return app.listen(process.env.PORT, () => { // abro el puerto en donde se ejecutará
+  return app.listen(port, () => { // abro el puerto en donde se ejecutará
     console.log(`Ejecutando el servidor en puerto: ${process.env.PORT}`);
   });
 };
